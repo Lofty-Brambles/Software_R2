@@ -5,6 +5,7 @@ import json
 import time
 
 from websockets import ClientConnection, connect, exceptions
+import asyncio
 
 from drone_simulator.logging_config import get_logger
 from prantik_das.parser import Parser
@@ -15,9 +16,10 @@ from prantik_das.structs import DroneData, ClientData
 class Client:
     """Client with sockets to fly the thing as per a selected runner."""
 
-    def __init__(self, url: str, runner: str):
+    def __init__(self, url: str, runner: str, sleep_time: int = 0):
         self.drone: DroneData = {"telemetry": [], "commands": [], "metrics": None}
         self.logger = get_logger(f"{runner}_client")
+        self.sleep_time = sleep_time
         self.clientData: ClientData = {
             "url": url,
             "conn_id": None,
@@ -79,6 +81,9 @@ class Client:
                     message = f"The drone has crashed: {crash_message}. Statistics: {self.drone["metrics"]}"
                     self.logger.warning(message)
                     break
+
+                if self.sleep_time != 0:
+                    await asyncio.sleep(self.sleep_time)
 
         except KeyboardInterrupt:
             message = f"The client {self.clientData["runner"]}, was killed by the user."
