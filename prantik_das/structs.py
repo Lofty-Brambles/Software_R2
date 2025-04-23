@@ -1,7 +1,7 @@
 from typing import Any, TypedDict, Callable, Literal
 
 
-# implement some sort of speed validation?
+# @TODO implement some sort of speed validation?
 class Command(TypedDict):
     speed: int
     altitude: int
@@ -20,6 +20,7 @@ class Telemetry(TypedDict):
     sensor: Sensor
 
 
+# Could narrow metrics further
 class DroneData(TypedDict):
     telemetry: list[Telemetry]
     commands: list[Command]
